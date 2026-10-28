@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}যোগাযোগ ও তথ্য সংশোধন | Baust Bus Tracking System{% endblock %}
+
+{% block content %}
+<section class="page-header-section">
+    <div class="container">
+        <h1 class="page-title">যোগাযোগ ও তথ্য সংশোধন</h1>
+        <p class="page-subtitle">বাসের রুট, স্টপেজ, সময়সূচি বা ভাড়া সংক্রান্ত কোনো নতুন তথ্য যুক্ত করতে অথবা বিদ্যমান তথ্য সংশোধন করতে ইমেইল বা ফেসবুকের মাধ্যমে সরাসরি আমাদের সাথে যোগাযোগ করুন।</p>
+    </div>
+</section>
+
+<section class="contact-page-section">
+    <div class="container">
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div>
+                    <span class="contact-badge">সরাসরি যোগাযোগ মাধ্যম</span>
+                    <h2 class="contact-card-title">ইমেইল ও ফেসবুকে যোগাযোগ করুন</h2>
+                    <p class="contact-card-desc">ওয়েবসাইটে প্রদর্শিত কোনো বাস স্টপেজ, সময়সূচি কিংবা ভাড়ার তথ্যে পরিবর্তন আসলে বা নতুন কোনো তথ্য যুক্ত করার প্রয়োজন হলে নিচের সোশ্যাল আইকন বা লিংকে ক্লিক করে আমাদের জানাতে পারেন।</p>
+                </div>
+
+                <div class="social-contact-list">
+                    <a href="mailto:santo.ictbaust25@gmail.com" class="social-contact-item email-card">
+                        <div class="social-icon-circle email-icon" aria-hidden="true">@</div>
+                        <div class="social-contact-info">
+                            <span class="social-contact-label">ইমেইলে তথ্য পাঠান (Email)</span>
+                            <strong class="social-contact-value">santo.ictbaust25@gmail.com</strong>
+                            <span class="social-contact-action">ইমেইল পাঠাতে ক্লিক করুন →</span>
+                        </div>
+                    </a>
+
+                    <a href="https://www.facebook.com/search/top?q=Shahriar%20Islam%20Santo%20BAUST" target="_blank" rel="noopener noreferrer" class="social-contact-item facebook-card">
+                        <div class="social-icon-circle facebook-icon" aria-hidden="true">f</div>
+                        <div class="social-contact-info">
+                            <span class="social-contact-label">ফেসবুকে মেসেজ দিন (Facebook)</span>
+                            <strong class="social-contact-value">Shahriar Islam Santo</strong>
+                            <span class="social-contact-action">ফেসবুকে যোগাযোগ করতে ক্লিক করুন →</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="contact-card">
+                <div>
+                    <span class="contact-badge">তথ্য হালনাগাদ ফর্ম</span>
+                    <h2 class="contact-card-title">তথ্য যুক্ত বা সংশোধনের অনুরোধ জানান</h2>
+                    <p class="contact-card-desc">প্রয়োজনীয় তথ্য পূরণ করে সরাসরি ইমেইলের মাধ্যমে আমাদের কাছে পাঠিয়ে দিন।</p>
+                </div>
+                <form action="mailto:santo.ictbaust25@gmail.com" method="get" enctype="text/plain" class="contact-form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="routeSelect">সংশ্লিষ্ট বাস রুট</label>
+                        <select id="routeSelect" name="route" class="form-select">
+                            {% for r in routes %}
+                            <option value="{{ r.title }}">{{ r.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="stopName">স্টপেজের নাম</label>
+                        <input id="stopName" name="stop" type="text" class="form-input" placeholder="স্টপেজের নাম লিখুন">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="details">বিস্তারিত তথ্য বা সংশোধনী</label>
+                        <textarea id="details" name="body" class="form-textarea" placeholder="কোন তথ্যটি যুক্ত বা সংশোধন করতে চান তা বিস্তারিত লিখুন..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">ইমেইলে পাঠান</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

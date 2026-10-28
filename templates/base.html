@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Baust Bus Tracking System{% endblock %}</title>
+    <meta name="description" content="BAUST-এ যাতায়াতের জন্য প্রয়োজনীয় বাস রুট, স্টপেজ, সময়সূচি ও ভাড়ার তথ্য সহজেই খুঁজে নিন।">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Top Navigation Bar (Section 4) -->
+    <header class="site-header">
+        <div class="container navbar-container">
+            <a href="{{ url_for('index') }}" class="brand-logo">
+                Baust Bus Tracking System
+            </a>
+
+            <div class="mobile-nav-backdrop" id="mobileNavBackdrop" aria-hidden="true"></div>
+
+            <nav class="main-nav" id="mainNav" aria-label="প্রধান নেভিগেশন">
+                <div class="mobile-nav-header">
+                    <span>নেভিগেশন মেনু</span>
+                </div>
+                <a href="{{ url_for('index') }}" class="nav-link {% if active_page == 'home' %}active{% endif %}">হোম</a>
+                <a href="{{ url_for('routes_page') }}" class="nav-link {% if active_page == 'routes' %}active{% endif %}">বাস রুট</a>
+                <a href="{{ url_for('schedule_page') }}" class="nav-link {% if active_page == 'schedule' %}active{% endif %}">সময়সূচি</a>
+                <a href="{{ url_for('about_page') }}" class="nav-link {% if active_page == 'about' %}active{% endif %}">আমাদের সম্পর্কে</a>
+                <a href="{{ url_for('contact_page') }}" class="nav-link {% if active_page == 'contact' %}active{% endif %}">যোগাযোগ</a>
+            </nav>
+
+            <div class="header-actions">
+                <button type="button" class="lang-switch-btn" id="langSwitchBtn" aria-label="Switch language">
+                    <span class="lang-switch-option active" data-lang="bn">বাংলা</span>
+                    <span class="lang-switch-option" data-lang="en">EN</span>
+                </button>
+                <button type="button" class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="মেনু খুলুন" aria-expanded="false" aria-controls="mainNav">
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Page Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer (Section 18) -->
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <!-- 18.1 Project Introduction -->
+            <div class="footer-col">
+                <h3 class="footer-brand">Baust Bus Tracking System</h3>
+                <p class="footer-desc">বাসের রুট, সময়সূচি, ভাড়ার তালিকা ও গুগল ম্যাপের তথ্য সহজেই জানুন। কোনো তথ্য যুক্ত বা সংশোধন করতে ইমেইল ও ফেসবুকে যোগাযোগ করুন।</p>
+                <div class="footer-social-row">
+                    <a href="mailto:santo.ictbaust25@gmail.com" class="footer-social-btn" aria-label="ইমেইলে যোগাযোগ করুন">
+                        <span>ইমেইল</span>
+                    </a>
+                    <a href="https://www.facebook.com/search/top?q=Shahriar%20Islam%20Santo%20BAUST" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="ফেসবুকে যোগাযোগ করুন">
+                        <span>ফেসবুক</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 18.2 Important Links -->
+            <div class="footer-col">
+                <h4 class="footer-heading">প্রয়োজনীয় লিংক</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('index') }}">হোম</a></li>
+                    <li><a href="{{ url_for('routes_page') }}">বাস রুট</a></li>
+                    <li><a href="{{ url_for('schedule_page') }}">সময়সূচি</a></li>
+                    <li><a href="{{ url_for('about_page') }}">আমাদের সম্পর্কে</a></li>
+                    <li><a href="{{ url_for('contact_page') }}">যোগাযোগ (তথ্য সংযোজন/সংশোধন)</a></li>
+                </ul>
+            </div>
+
+            <!-- 18.3 Our Routes -->
+            <div class="footer-col">
+                <h4 class="footer-heading">আমাদের রুট</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('route_detail', route_id='dinajpur') }}">দিনাজপুর ↔ BAUST</a></li>
+                    <li><a href="{{ url_for('route_detail', route_id='rangpur') }}">রংপুর ↔ BAUST</a></li>
+                    <li><a href="{{ url_for('route_detail', route_id='nilphamari') }}">নীলফামারী ↔ BAUST</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 18.4 & 18.5 Developer & Copyright Bar -->
+        <div class="footer-bottom">
+            <div class="container footer-bottom-inner">
+                <p class="copyright-text">© 2026 Baust Bus Tracking System. All Rights Reserved.</p>
+                <p class="developer-text">Developed by <strong>Shahriar Islam Santo</strong></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

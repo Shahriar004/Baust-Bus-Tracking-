@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}হোম | Baust Bus Tracking System{% endblock %}
+
+{% block content %}
+<!-- 5.1 Hero Section -->
+<section class="hero-section">
+    <div class="container hero-inner">
+        <div class="hero-content">
+            <h1 class="hero-title">Baust Bus Tracking System</h1>
+            <p class="hero-subtitle">
+                শিক্ষার্থীদের ক্যাম্পাসে যাতায়াতের সুবিধার্থে দিনাজপুর, রংপুর ও নীলফামারী রুটের বাসের নির্ধারিত স্টপেজ, যাতায়াতের সময়সূচি ও ভাড়ার তালিকা এক জায়গায় দেখুন।
+            </p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('routes_page') }}" class="btn btn-primary">বাস রুট দেখুন</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5.3 Quick Verified Information -->
+<section class="quick-info-section">
+    <div class="container">
+        <div class="quick-info-grid">
+            <div class="quick-info-card">
+                <span class="quick-info-label">মোট নির্ধারিত রুট</span>
+                <strong class="quick-info-value">৩টি বাস রুট</strong>
+                <span class="quick-info-sub">দিনাজপুর, রংপুর ও নীলফামারী</span>
+            </div>
+            <div class="quick-info-card">
+                <span class="quick-info-label">যাতায়াতের দিক</span>
+                <strong class="quick-info-value">BAUST-এ যাওয়া এবং BAUST থেকে ফেরা</strong>
+                <span class="quick-info-sub">সকাল ও দুপুরের নির্ধারিত সময়সূচি</span>
+            </div>
+            <div class="quick-info-card">
+                <span class="quick-info-label">প্রদত্ত তথ্যসমূহ</span>
+                <strong class="quick-info-value">স্টপেজ, সময়, ভাড়া ও দূরত্ব</strong>
+                <span class="quick-info-sub">প্রতিটি স্টপেজের ক্রমিক অনুযায়ী তথ্য</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5.2 Route Cards (Strictly 3 Official Routes) -->
+<section class="routes-showcase-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">প্রধান বাস রুটসমূহ</h2>
+            <p class="section-desc">নিচের যেকোনো একটি রুট নির্বাচন করে স্টপেজ, আনুমানিক দূরত্ব, যাতায়াতের সময়সূচি ও নির্ধারিত ভাড়া দেখুন।</p>
+        </div>
+
+        <div class="route-cards-grid">
+            {% for route in routes %}
+            <article class="route-card">
+                <div class="route-card-header">
+                    <div class="route-icon-box" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="3" width="16" height="15" rx="2"></rect>
+                            <path d="M4 11h16"></path>
+                            <path d="M8 15h.01"></path>
+                            <path d="M16 15h.01"></path>
+                            <path d="M6 18v3"></path>
+                            <path d="M18 18v3"></path>
+                        </svg>
+                    </div>
+                    <h3 class="route-card-title">{{ route.title }}</h3>
+                </div>
+                <p class="route-card-desc">{{ route.short_description }}</p>
+                <div class="route-card-meta">
+                    <span>আনুমানিক দূরত্ব: {{ route.estimated_distance }}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>যাত্রা শুরু: {{ route.going_start_time }}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>ফেরা: {{ route.returning_start_time }}</span>
+                </div>
+                <div class="route-card-actions">
+                    <a href="{{ url_for('route_detail', route_id=route.id) }}" class="btn btn-primary btn-block">রুট দেখুন</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Quick Overview Table on Homepage -->
+<section class="routes-page-section">
+    <div class="container">
+        <div class="schedule-display-box">
+            <div class="schedule-display-header">
+                <div>
+                    <p class="schedule-kicker">রুটগুলোর সংক্ষিপ্ত তালিকা</p>
+                    <h2 class="schedule-main-heading">এক নজরে তিনটি বাস রুটের সময়সূচি ও দূরত্ব</h2>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>ক্রমিক</th>
+                            <th>বাস রুটের নাম</th>
+                            <th>প্রথম স্টপেজ</th>
+                            <th>আনুমানিক দূরত্ব</th>
+                            <th>সকালে যাত্রা শুরু</th>
+                            <th>দুপুরে ক্যাম্পাস থেকে ফেরা</th>
+                            <th>বিস্তারিত</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for route in routes %}
+                        <tr>
+                            <td class="col-serial tabular-nums">{{ loop.index }}</td>
+                            <td class="col-name">{{ route.title }}</td>
+                            <td>{{ route.going.stops[0].name }}</td>
+                            <td class="tabular-nums">{{ route.estimated_distance }}</td>
+                            <td class="col-time tabular-nums">{{ route.going_start_time }}</td>
+                            <td class="col-time tabular-nums">{{ route.returning_start_time }}</td>
+                            <td>
+                                <a href="{{ url_for('route_detail', route_id=route.id) }}" class="text-link">বিস্তারিত দেখুন →</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5.4 Non-GPS Informational Notice -->
+<section class="notice-section">
+    <div class="container">
+        <div class="info-notice-box" role="note">
+            <div class="notice-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+            </div>
+            <p class="notice-text">
+                {{ summary.no_gps_notice }}
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

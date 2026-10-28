@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}সময়সূচি | Baust Bus Tracking System{% endblock %}
+
+{% block content %}
+<section class="page-header-section">
+    <div class="container">
+        <h1 class="page-title">বাসের সময়সূচি ও ভাড়া অনুসন্ধান</h1>
+        <p class="page-subtitle">নিচের ফর্ম থেকে আপনার কাঙ্ক্ষিত রুট এবং যাতায়াতের দিক নির্বাচন করে নির্ধারিত স্টপেজ, সময় ও ভাড়া দেখুন।</p>
+    </div>
+</section>
+
+<section class="schedule-page-section">
+    <div class="container">
+        <!-- Selection Filter Box (Section 12) -->
+        <form method="get" action="{{ url_for('schedule_page') }}" class="schedule-filter-form" id="scheduleFilterForm">
+            <div class="form-group">
+                <label for="routeSelect" class="form-label">প্রথম নির্বাচন: রুট</label>
+                <select name="route" id="routeSelect" class="form-select">
+                    <option value="">-- রুট নির্বাচন করুন --</option>
+                    <option value="dinajpur" {% if selected_route_id == 'dinajpur' %}selected{% endif %}>দিনাজপুর</option>
+                    <option value="rangpur" {% if selected_route_id == 'rangpur' %}selected{% endif %}>রংপুর</option>
+                    <option value="nilphamari" {% if selected_route_id == 'nilphamari' %}selected{% endif %}>নীলফামারী</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="directionSelect" class="form-label">দ্বিতীয় নির্বাচন: যাতায়াতের দিক</label>
+                <select name="direction" id="directionSelect" class="form-select">
+                    <option value="">-- যাতায়াতের দিক নির্বাচন করুন --</option>
+                    <option value="going" {% if selected_direction == 'going' %}selected{% endif %}>BAUST-এ যাওয়া</option>
+                    <option value="returning" {% if selected_direction == 'returning' %}selected{% endif %}>BAUST থেকে ফেরা</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">সময়সূচি দেখুন</button>
+                {% if selected_route_id or selected_direction %}
+                <a href="{{ url_for('schedule_page') }}" class="btn btn-outline">পুনরায় নির্বাচন</a>
+                {% endif %}
+            </div>
+        </form>
+
+        <!-- Real-Time Stop & Route Search Input Bar -->
+        <div class="realtime-search-bar" role="search">
+            <div class="search-input-wrapper">
+                <span class="search-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input
+                    type="search"
+                    id="scheduleSearchInput"
+                    class="search-input"
+                    placeholder="সময়সূচির স্টপেজ, সময় বা ভাড়া লিখে তাৎক্ষণিক ফিল্টার করুন (যেমন: দশ মাইল, সকাল ৭:০০, ৪০ টাকা...)"
+                    aria-label="সময়সূচির স্টপেজ বা সময় লিখে খুঁজুন"
+                >
+                <button type="button" id="scheduleSearchClear" class="search-clear-btn" style="display: none;" aria-label="অনুসন্ধান মুছুন">
+                    মুছুন
+                </button>
+            </div>
+            <p class="search-status-text" id="scheduleSearchStatus">
+                টেবিলের যেকোনো স্টপেজের নাম, ক্রমিক, সময় বা ভাড়া লিখে সাথে সাথে খুঁজে বের করুন।
+            </p>
+        </div>
+
+        <!-- Validation Error or Guidance State -->
+        {% if error_message %}
+        <div class="warning-notice-banner" role="alert">
+            {{ error_message }}
+        </div>
+        {% elif not schedule_data %}
+        <div class="empty-guidance-box">
+            <h2 class="empty-guidance-title">রুট এবং যাতায়াতের দিক নির্বাচন করুন</h2>
+            <p class="empty-guidance-desc">
+                সময়সূচি ও ভাড়ার টেবিল দেখতে উপরে <strong>প্রথম নির্বাচন: রুট</strong> (দিনাজপুর, রংপুর অথবা নীলফামারী) এবং <strong>দ্বিতীয় নির্বাচন: যাতায়াতের দিক</strong> (BAUST-এ যাওয়া অথবা BAUST থেকে ফেরা) নির্বাচন করে <strong>সময়সূচি দেখুন</strong> বাটনে ক্লিক করুন।
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Selected Schedule Table -->
+        {% if schedule_data %}
+        <div class="schedule-display-box">
+            <div class="schedule-display-header">
+                <div>
+                    <p class="schedule-kicker">{{ schedule_data.route_title }} · {{ schedule_data.direction_label }}</p>
+                    <h2 class="schedule-main-heading">{{ schedule_data.direction_title }}</h2>
+                </div>
+                <div class="schedule-meta-summary">
+                    <span>রুট শুরুর নির্ধারিত সময়: <strong>{{ schedule_data.route_start_time }}</strong></span>
+                    {% if schedule_data.has_separate_first_stop_time %}
+                    <span aria-hidden="true">·</span>
+                    <span>প্রথম স্টপেজের সময় ({{ schedule_data.stops[0].name }}): <strong>{{ schedule_data.first_stop_time }}</strong></span>
+                    {% endif %}
+                    <span aria-hidden="true">·</span>
+                    <span>মোট স্টপেজ: <strong>{{ schedule_data.total_stops }}টি</strong></span>
+                </div>
+            </div>
+
+            {% if schedule_data.is_estimated %}
+            <div class="warning-notice-banner" role="alert">
+                <strong>{{ schedule_data.notice }}</strong>
+            </div>
+            {% endif %}
+
+            <div class="table-responsive">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>ক্রমিক নম্বর</th>
+                            <th>স্টপেজের নাম</th>
+                            <th>{% if schedule_data.is_estimated %}সময় (আনুমানিক){% else %}সময়{% endif %}</th>
+                            <th>ভাড়া</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stop in schedule_data.stops %}
+                        <tr>
+                            <td class="col-serial tabular-nums">{{ stop.serial }}</td>
+                            <td class="col-name">{{ stop.name }}</td>
+                            <td class="col-time tabular-nums">
+                                {{ stop.time }}
+                                {% if schedule_data.is_estimated %}
+                                <span class="estimated-text">(আনুমানিক)</span>
+                                {% endif %}
+                            </td>
+                            <td class="col-fare tabular-nums">{{ stop.fare }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

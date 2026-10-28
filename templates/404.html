@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}পেজটি পাওয়া যায়নি (404) | Baust Bus Tracking System{% endblock %}
+
+{% block content %}
+<section class="error-404-section">
+    <div class="container">
+        <div class="error-404-box">
+            <p class="error-code tabular-nums">404</p>
+            <h1 class="error-title">দুঃখিত, কাঙ্ক্ষিত পেজ বা বাস রুটটি পাওয়া যায়নি</h1>
+            <p class="error-desc">
+                আপনি যে রুট বা ওয়েবপেজটি খুঁজছেন তা এই সিস্টেমে বিদ্যমান নেই। Baust Bus Tracking System-এ শুধুমাত্র নির্ধারিত তিনটি রুট (দিনাজপুর, রংপুর ও নীলফামারী) অন্তর্ভুক্ত রয়েছে।
+            </p>
+            <div class="error-actions">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">হোমপেজে ফিরে যান</a>
+                <a href="{{ url_for('routes_page') }}" class="btn btn-green">সব বাস রুট দেখুন</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}{{ route.title }} | Baust Bus Tracking System{% endblock %}
+
+{% block content %}
+<section class="page-header-section">
+    <div class="container">
+        <p class="breadcrumb-nav">
+            <a href="{{ url_for('index') }}">হোম</a>
+            <span aria-hidden="true">/</span>
+            <a href="{{ url_for('routes_page') }}">বাস রুট</a>
+            <span aria-hidden="true">/</span>
+            <span>{{ route.title }}</span>
+        </p>
+        <h1 class="page-title">{{ route.title }}</h1>
+        <p class="page-subtitle">{{ route.short_description }}</p>
+
+        <div class="detail-direction-switcher">
+            <a href="{{ url_for('route_detail', route_id=route.id, direction='going') }}"
+               class="btn {% if selected_direction == 'going' %}btn-primary{% else %}btn-outline{% endif %}">
+                BAUST-এ যাওয়ার সময়সূচি
+            </a>
+            <a href="{{ url_for('route_detail', route_id=route.id, direction='returning') }}"
+               class="btn {% if selected_direction == 'returning' %}btn-green{% else %}btn-outline{% endif %}">
+                BAUST থেকে ফেরার সময়সূচি
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="route-detail-section">
+    <div class="container">
+        <article class="route-card">
+            <div class="route-card-header">
+                <div class="route-icon-box" aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="4" y="3" width="16" height="15" rx="2"></rect>
+                        <path d="M4 11h16"></path>
+                        <path d="M8 15h.01"></path>
+                        <path d="M16 15h.01"></path>
+                        <path d="M6 18v3"></path>
+                        <path d="M18 18v3"></path>
+                    </svg>
+                </div>
+                <h2 class="route-card-title">{{ route.title }} — রুট সারসংক্ষেপ</h2>
+            </div>
+            <p class="route-card-desc">{{ route.short_description }}</p>
+            <div class="route-card-meta">
+                <span>আনুমানিক দূরত্ব: {{ route.estimated_distance }}</span>
+                <span aria-hidden="true">·</span>
+                <span>যাত্রা শুরু: {{ route.going_start_time }}</span>
+                <span aria-hidden="true">·</span>
+                <span>ফেরা: {{ route.returning_start_time }}</span>
+            </div>
+        </article>
+
+        {% if active_schedule %}
+        <div class="schedule-display-box">
+            <div class="schedule-display-header">
+                <div>
+                    <p class="schedule-kicker">{{ active_schedule.schedule_type }}</p>
+                    <h2 class="schedule-main-heading">{{ active_schedule.direction_title }}</h2>
+                </div>
+                <div class="schedule-meta-summary">
+                    <span>আনুমানিক দূরত্ব: <strong>{{ active_schedule.estimated_distance }}</strong></span>
+                    <span aria-hidden="true">·</span>
+                    <span>রুট শুরুর নির্ধারিত সময়: <strong>{{ active_schedule.route_start_time }}</strong></span>
+                    {% if active_schedule.has_separate_first_stop_time %}
+                    <span aria-hidden="true">·</span>
+                    <span>প্রথম স্টপেজের সময় ({{ active_schedule.stops[0].name }}): <strong>{{ active_schedule.first_stop_time }}</strong></span>
+                    {% endif %}
+                    <span aria-hidden="true">·</span>
+                    <span>মোট স্টপেজ: <strong>{{ active_schedule.total_stops }}টি</strong></span>
+                </div>
+            </div>
+
+            {% if active_schedule.is_estimated %}
+            <div class="warning-notice-banner" role="alert">
+                <strong>{{ active_schedule.notice }}</strong>
+            </div>
+            {% endif %}
+
+            <div class="table-responsive">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>ক্রমিক</th>
+                            <th>স্টপেজের নাম</th>
+                            <th>{% if active_schedule.is_estimated %}আনুমানিক সময়{% else %}সময়{% endif %}</th>
+                            <th>ভাড়া</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stop in active_schedule.stops %}
+                        <tr>
+                            <td class="col-serial tabular-nums">{{ stop.serial }}</td>
+                            <td class="col-name">{{ stop.name }}</td>
+                            <td class="col-time tabular-nums">
+                                {{ stop.time }}
+                                {% if active_schedule.is_estimated %}
+                                <span class="estimated-text">(আনুমানিক)</span>
+                                {% endif %}
+                            </td>
+                            <td class="col-fare tabular-nums">{{ stop.fare }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

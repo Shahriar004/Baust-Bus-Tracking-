@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}বাস রুট | Baust Bus Tracking System{% endblock %}
+
+{% block content %}
+<section class="page-header-section">
+    <div class="container">
+        <h1 class="page-title">বাস রুট</h1>
+        <p class="page-subtitle">BAUST-এর তিনটি নির্ধারিত বাস রুট এবং যাওয়া ও ফেরার স্টপেজভিত্তিক সময়সূচি ও ভাড়ার তালিকা।</p>
+    </div>
+</section>
+
+<section class="routes-page-section">
+    <div class="container">
+        <!-- Real-Time Search Bar -->
+        <div class="realtime-search-bar" role="search">
+            <div class="search-input-wrapper">
+                <span class="search-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input
+                    type="search"
+                    id="routesSearchInput"
+                    class="search-input"
+                    placeholder="রুট বা স্টপেজের নাম লিখে খুঁজুন (যেমন: দিনাজপুর, কলেজ মোড়, শাপলা, চৌরঙ্গী, রানীর বন্দর...)"
+                    aria-label="রুট বা স্টপেজের নাম লিখে খুঁজুন"
+                >
+                <button type="button" id="routesSearchClear" class="search-clear-btn" style="display: none;" aria-label="অনুসন্ধান মুছুন">
+                    মুছুন
+                </button>
+            </div>
+            <p class="search-status-text" id="routesSearchStatus">
+                যেকোনো রুট, স্টপেজের নাম, সময় বা ভাড়া লিখে তাৎক্ষণিক ফিল্টার করুন।
+            </p>
+        </div>
+
+        <!-- Three Route Cards with Direction Buttons -->
+        <div class="route-selector-grid" id="routeCardsContainer">
+            {% for route in routes %}
+            <div class="route-selector-card {% if selected_route_id == route.id %}selected{% endif %}">
+                <div class="route-selector-top">
+                    <h2 class="route-selector-title">{{ route.title }}</h2>
+                    <a href="{{ url_for('route_detail', route_id=route.id) }}" class="text-link">বিস্তারিত পেজ →</a>
+                </div>
+                <p class="route-selector-desc">{{ route.short_description }}</p>
+                <div class="route-card-meta">
+                    <span>আনুমানিক দূরত্ব: {{ route.estimated_distance }}</span>
+                </div>
+                <div class="direction-btn-group">
+                    <a href="{{ url_for('routes_page', route=route.id, direction='going') }}"
+                       class="btn {% if selected_route_id == route.id and selected_direction == 'going' %}btn-primary{% else %}btn-outline{% endif %}">
+                        BAUST-এ যাওয়ার সময়সূচি
+                    </a>
+                    <a href="{{ url_for('routes_page', route=route.id, direction='returning') }}"
+                       class="btn {% if selected_route_id == route.id and selected_direction == 'returning' %}btn-green{% else %}btn-outline{% endif %}">
+                        BAUST থেকে ফেরার সময়সূচি
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Active Selected Route Schedule Display -->
+        {% if active_schedule %}
+        <div class="schedule-display-box" id="routeScheduleSection">
+            <div class="schedule-display-header">
+                <div>
+                    <p class="schedule-kicker">{{ active_schedule.route_title }}</p>
+                    <h2 class="schedule-main-heading">{{ active_schedule.direction_title }}</h2>
+                </div>
+                <div class="schedule-meta-summary">
+                    <span>আনুমানিক দূরত্ব: <strong>{{ active_schedule.estimated_distance }}</strong></span>
+                    <span aria-hidden="true">·</span>
+                    <span>রুট শুরুর নির্ধারিত সময়: <strong>{{ active_schedule.route_start_time }}</strong></span>
+                    {% if active_schedule.has_separate_first_stop_time %}
+                    <span aria-hidden="true">·</span>
+                    <span>প্রথম স্টপেজের সময় ({{ active_schedule.stops[0].name }}): <strong>{{ active_schedule.first_stop_time }}</strong></span>
+                    {% endif %}
+                    <span aria-hidden="true">·</span>
+                    <span>মোট স্টপেজ: <strong>{{ active_schedule.total_stops }}টি</strong></span>
+                </div>
+            </div>
+
+            {% if active_schedule.is_estimated %}
+            <div class="warning-notice-banner" role="alert">
+                <strong>{{ active_schedule.notice }}</strong>
+            </div>
+            {% endif %}
+
+            <div class="table-responsive">
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>ক্রমিক</th>
+                            <th>স্টপেজের নাম</th>
+                            <th>{% if active_schedule.is_estimated %}আনুমানিক সময়{% else %}সময়{% endif %}</th>
+                            <th>ভাড়া</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stop in active_schedule.stops %}
+                        <tr>
+                            <td class="col-serial tabular-nums">{{ stop.serial }}</td>
+                            <td class="col-name">{{ stop.name }}</td>
+                            <td class="col-time tabular-nums">
+                                {{ stop.time }}
+                                {% if active_schedule.is_estimated %}
+                                <span class="estimated-text">(আনুমানিক)</span>
+                                {% endif %}
+                            </td>
+                            <td class="col-fare tabular-nums">{{ stop.fare }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

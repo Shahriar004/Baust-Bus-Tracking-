@@ -1,0 +1,6 @@
+{
+  "name": "Baust Bus Tracking System",
+  "description": "বাংলাদেশ আর্মি ইউনিভার্সিটি অব সায়েন্স অ্যান্ড টেকনোলজি (BAUST)-এর বাস রুট, স্টপেজ, সময়সূচি ও ভাড়ার তথ্য প্রদর্শনের OOP-ভিত্তিক ওয়েব অ্যাপ্লিকেশন।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
